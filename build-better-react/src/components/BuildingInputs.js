@@ -9,6 +9,7 @@ import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Button from "@mui/material/Button";
+import { getCalculation } from "../api/getCalculation";
 
 const Container = styled.div``;
 
@@ -25,12 +26,12 @@ const StyledTextField = styled(TextField)`
 const BuildingInputs = (props) => {
   const [fields, setFields] = useState({
     buildingType: null,
-    area: null,
-    electricity: null,
-    naturalGas: null,
-    steam: null,
-    fuelOil2: null,
-    fuelOil4: null,
+    area: 0,
+    electricity: 0,
+    natGas: 0,
+    steam: 0,
+    fuelOil2: 0,
+    fuelOil4: 0,
     kWh: 0,
     therm: 0,
     mLb: 0,
@@ -56,6 +57,19 @@ const BuildingInputs = (props) => {
 
   const handleDefaultValuesCheck = () => {
     setDefaultValuesChecked(!defaultValuesChecked);
+  };
+
+  const handleCalculate = (e) => {
+    e.preventDefault();
+    let res = getCalculation({
+      bldType: fields.buildingType,
+      sqft: fields.area,
+      steam: fields.steam,
+      natGas: fields.natGas,
+      electricity: fields.electricity,
+      fuelOil2: fields.fuelOil2,
+      fuelOil4: fields.fuelOil4,
+    });
   };
 
   useEffect(() => {
@@ -153,8 +167,8 @@ const BuildingInputs = (props) => {
           id="outlined-basic"
           label="Natural Gas - therms"
           variant="outlined"
-          value={fields.naturalGas}
-          onChange={(e) => handleTextChange(e, "naturalGas")}
+          value={fields.natGas}
+          onChange={(e) => handleTextChange(e, "natGas")}
         />
         <StyledTextField
           id="outlined-basic"
@@ -213,7 +227,11 @@ const BuildingInputs = (props) => {
         />
       </Flex>
 
-      <Button variant="contained" style={{ display: "flex" }}>
+      <Button
+        variant="contained"
+        style={{ display: "flex" }}
+        onClick={handleCalculate}
+      >
         Calculate
       </Button>
     </Container>
