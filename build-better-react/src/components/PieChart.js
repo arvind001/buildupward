@@ -1,4 +1,5 @@
 import React, { PureComponent } from "react";
+import styled from "styled-components";
 import {
   PieChart,
   Pie,
@@ -15,7 +16,7 @@ const data = [
   { name: "Group D", value: 200 },
 ];
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#EA4B48"];
 
 const RADIAN = Math.PI / 180;
 const renderCustomizedLabel = ({
@@ -43,6 +44,11 @@ const renderCustomizedLabel = ({
     </text>
   );
 };
+
+const CenterLabel = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
 const renderActiveShape = (props) => {
   const RADIAN = Math.PI / 180;
@@ -121,14 +127,14 @@ export default class PieColorful extends PureComponent {
         <Pie
           activeIndex={this.state.activeIndex}
           activeShape={renderActiveShape}
-          data={data}
+          data={this.props.data}
           cx="50%"
           cy="50%"
           labelLine={false}
-          outerRadius={100}
+          outerRadius={120}
           fill="#8884d8"
           dataKey="value"
-          innerRadius={80}
+          innerRadius={100}
           paddingAngle={5}
           onMouseEnter={this.onPieEnter}
         >

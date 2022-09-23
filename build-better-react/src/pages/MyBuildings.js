@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import styled from "styled-components";
 import BuildingCard from "../components/BuildingCard";
 import { Img } from "../components/Navigation";
@@ -6,8 +6,7 @@ import Plus from "../assets/Plus.svg";
 import Modal from "@mui/material/Modal";
 import BuildingInputs from "../components/BuildingInputs";
 import Box from "@mui/material/Box";
-import { addBuilding } from "../actions/addBuilding";
-import { connect } from "react-redux";
+import { store } from "../store/store";
 
 const Container = styled.div`
   min-width: 840px;
@@ -49,21 +48,22 @@ const StyledBox = styled(Box)`
   padding: 30px;
 `;
 
-const MyBuildings = ({ addBuilding, buildings }) => {
+const MyBuildings = ({ buildings }) => {
   const [modalOpen, setModalOpen] = useState(false);
+  const gState = useContext(store);
+  const { dispatch } = gState;
+  const globalState = gState.state;
 
   const closeModal = () => {
     setModalOpen(false);
   };
 
   const openModal = () => {
-    addBuilding();
     setModalOpen(true);
   };
 
   return (
     <Container>
-      {console.log("what is state", buildings)}
       <Header>
         <Title>My Buildings</Title>
         <AddBuildings onClick={openModal}>
@@ -71,24 +71,21 @@ const MyBuildings = ({ addBuilding, buildings }) => {
           <ButtonText>New Building</ButtonText>
         </AddBuildings>
       </Header>
-      <BuildingCard />
+      {globalState.myBuildings.length > 0 &&
+        globalState.myBuildings.map((building) => {
+          return <BuildingCard building={building} />;
+        })}
+      {globalState.myBuildings.length === 0 && (
+        <>{`Add buildings to get started`}</>
+      )}
+      {/* <BuildingCard /> */}
       <Modal open={modalOpen} onClose={closeModal}>
         <StyledBox>
-          <BuildingInputs />
+          <BuildingInputs closeModal={closeModal} />
         </StyledBox>
       </Modal>
     </Container>
   );
 };
 
-export const mapStateToProps = (state) => {
-  return {
-    buildings: state,
-  };
-};
-
-export const mapDispatchToProps = (dispatch) => ({
-  addBuilding: () => dispatch(addBuilding("hello")),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(MyBuildings);
+export default MyBuildings;

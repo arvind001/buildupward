@@ -5,6 +5,7 @@ import { Routes, Route, Link, BrowserRouter } from "react-router-dom";
 import styled from "styled-components";
 import Navigation from "./components/Navigation";
 import MyBuildings from "./pages/MyBuildings";
+import { StateProvider } from "./store/store";
 
 const Container = styled.div`
   margin: 0 auto;
@@ -19,15 +20,17 @@ const PageContainer = styled.div``;
 function App() {
   return (
     <BrowserRouter>
-      <Container>
-        <Navigation />
+      <StateProvider>
+        <Container>
+          <Navigation />
 
-        <Routes>
-          <Route path="/" element={<BuildingInputs />} />
-          <Route path="/my-buildings" element={<MyBuildings />} />
-        </Routes>
-        {/* <BuildingInputs /> */}
-      </Container>
+          <Routes>
+            <Route path="/" element={<BuildingInputs />} />
+            <Route path="/my-buildings" element={<MyBuildings />} />
+          </Routes>
+          {/* <BuildingInputs /> */}
+        </Container>
+      </StateProvider>
     </BrowserRouter>
   );
 }

@@ -8,10 +8,15 @@ export const getCalculation = async (inputs) => {
     // console.log("i am being called2", key, value);
   }
 
-  let result = await axios.post(
-    "https://build-better-flask-app.herokuapp.com/LL97Calculator",
-    formData
-  );
+  try {
+    let result = await axios.post(
+      "https://build-better-flask-app.herokuapp.com/bldDataCalculator",
+      formData
+    );
+    return result;
+  } catch (e) {
+    throw e;
+  }
 
   //   let result = await axios.get("https://build-better-flask-app.herokuapp.com/");
 
@@ -22,6 +27,4 @@ export const getCalculation = async (inputs) => {
   //       body: formData,
   //     }
   //   );
-  console.log("what is result", result);
-  return result;
 };

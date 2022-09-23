@@ -33,7 +33,7 @@ const ThresholdsContainer = styled.div`
 const Bar = styled.div`
   position: absolute;
   height: 30px;
-  width: 35%;
+  width: ${(props) => (props.size ? props.size : "0%")};
   background-color: red;
   top: 62%;
   left: 0;
@@ -49,26 +49,43 @@ const BarText = styled.div`
   padding-left: 10px;
 `;
 
-const ThresholdChart = () => {
+const ThresholdChart = ({ fines, tce }) => {
+  const calculateBarWidth = () => {
+    if (tce <= fines.fines35) {
+      return "20%";
+    } else if (tce > fines.fines35 && tce <= fines.fines30) {
+      return "35%";
+    } else if (tce > fines.fines30 && fines <= fines.fine24) {
+      return "60%";
+    } else if (tce > fines.fines24) {
+      return "85%";
+    }
+  };
   return (
     <Container>
-      <Bar>
-        <BarText>15,000 tCO2</BarText>
+      <Bar size={calculateBarWidth()}>
+        <BarText>{Number(tce).toLocaleString()} tCO2</BarText>
       </Bar>
       <ThresholdsContainer>
         <Threshold>
           <ThresholdText>Threshold 2035</ThresholdText>
-          <ThresholdText>35,000 tCO2</ThresholdText>
+          <ThresholdText>
+            {Number(fines.fines35).toLocaleString()} tCO2
+          </ThresholdText>
           <ThresholdLine />
         </Threshold>
         <Threshold>
           <ThresholdText>Threshold 2030</ThresholdText>
-          <ThresholdText>45,000 tCO2</ThresholdText>
+          <ThresholdText>
+            {Number(fines.fines30).toLocaleString()} tCO2
+          </ThresholdText>
           <ThresholdLine />
         </Threshold>
         <Threshold>
           <ThresholdText>Threshold 2024</ThresholdText>
-          <ThresholdText>65,000 tCO2</ThresholdText>
+          <ThresholdText>
+            {Number(fines.fines24).toLocaleString()} tCO2
+          </ThresholdText>
           <ThresholdLine />
         </Threshold>
       </ThresholdsContainer>

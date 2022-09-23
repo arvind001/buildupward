@@ -8,6 +8,7 @@ import ThresholdChart from "./ThresholdChart";
 const Container = styled.div`
   box-shadow: 0px 3px 8px 0px rgba(0, 0, 0, 0.15);
   padding: 20px;
+  margin: 35px 0;
 `;
 
 const Header = styled.div`
@@ -114,7 +115,7 @@ const BuildingCard = ({ building }) => {
   return (
     <Container>
       <Header>
-        <Address>241 10th St</Address>
+        <Address>{building.address}</Address>
         <EditButton>
           <Img src={Edit} />
           <EditButtonText>Edit</EditButtonText>
@@ -123,11 +124,15 @@ const BuildingCard = ({ building }) => {
       <DataRow>
         <Data>
           <DataHeader>Annual Energy Cost</DataHeader>
-          <DataValue>$ 13,200,324</DataValue>
+          <DataValue>
+            ${Number(building.annualEnergyCost).toLocaleString()}
+          </DataValue>
         </Data>
         <Data>
           <DataHeader>Total Carbon Emissions</DataHeader>
-          <DataValue>55,000 tCO2</DataValue>
+          <DataValue>
+            {Number(building.totalCarbonEmissions).toLocaleString()} tCO2
+          </DataValue>
         </Data>
         <Data>
           <DataHeader>Energy Use Intensity</DataHeader>
@@ -135,25 +140,34 @@ const BuildingCard = ({ building }) => {
         </Data>
       </DataRow>
       <Charts>
-        <PieColorful />
-        <PieColorful />
+        <PieColorful data={building.energyTypes} />
+        <PieColorful data={building.energyTypes} />
       </Charts>
       <RowHeader>Local Law 97 Fines</RowHeader>
-      <ThresholdChart />
+      <ThresholdChart
+        fines={building.LL97Fines}
+        tce={building.totalCarbonEmissions}
+      />
       <FinesContainer>
         <FinesTitle>Fines</FinesTitle>
         <Fines>
           <Fine>
             <FineValue>2024</FineValue>
-            <FineValue>0</FineValue>
+            <FineValue>
+              ${Number(building.LL97Fines.fines24).toLocaleString}
+            </FineValue>
           </Fine>
           <Fine>
             <FineValue>2030</FineValue>
-            <FineValue>$500,000.00</FineValue>
+            <FineValue>
+              ${Number(building.LL97Fines.fines30).toLocaleString()}
+            </FineValue>
           </Fine>
           <Fine>
             <FineValue>2035</FineValue>
-            <FineValue>$700,000.00</FineValue>
+            <FineValue>
+              ${Number(building.LL97Fines.fines35).toLocaleString()}
+            </FineValue>
           </Fine>
         </Fines>
       </FinesContainer>

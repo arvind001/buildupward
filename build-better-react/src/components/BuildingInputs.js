@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
@@ -10,6 +10,8 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Button from "@mui/material/Button";
 import { getCalculation } from "../api/getCalculation";
+import { store } from "../store/store";
+import { cloneDeep } from "lodash";
 
 const Container = styled.div``;
 
@@ -20,10 +22,13 @@ const StyledSelect = styled(Select)`
 
 const StyledTextField = styled(TextField)`
   margin: 5px !important;
-  width: 200px;
+  width: ${(props) => (props.full ? "410px" : "200px")};
 `;
 
 const BuildingInputs = (props) => {
+  const gState = useContext(store);
+  const { dispatch } = gState;
+  const globalState = gState.state;
   const [fields, setFields] = useState({
     buildingType: null,
     area: 0,
@@ -37,6 +42,7 @@ const BuildingInputs = (props) => {
     mLb: 0,
     gal2: 0,
     gal4: 0,
+    buildingAddress: null,
   });
   const [defaultValuesChecked, setDefaultValuesChecked] = useState(true);
 
@@ -59,17 +65,32 @@ const BuildingInputs = (props) => {
     setDefaultValuesChecked(!defaultValuesChecked);
   };
 
-  const handleCalculate = (e) => {
+  const handleCalculate = async (e) => {
     e.preventDefault();
-    let res = getCalculation({
-      bldType: fields.buildingType,
-      sqft: fields.area,
-      steam: fields.steam,
-      natGas: fields.natGas,
-      electricity: fields.electricity,
-      fuelOil2: fields.fuelOil2,
-      fuelOil4: fields.fuelOil4,
-    });
+    try {
+      let res = await getCalculation({
+        bldType: fields.buildingType,
+        sqft: fields.area,
+        steam: fields.steam,
+        natGas: fields.natGas,
+        electricity: fields.electricity,
+        fuelOil2: fields.fuelOil2,
+        fuelOil4: fields.fuelOil4,
+      });
+
+      res.data["address"] = fields.buildingAddress;
+      //   const buildings =
+      const payload = cloneDeep(globalState.myBuildings);
+      payload.push(res.data);
+      console.log("about to be payload", payload, res);
+      dispatch({
+        type: "ADD_BUILDING",
+        payload: payload,
+      });
+      props.closeModal();
+    } catch (e) {
+      return;
+    }
   };
 
   useEffect(() => {
@@ -100,6 +121,14 @@ const BuildingInputs = (props) => {
 
   return (
     <Container>
+      <StyledTextField
+        id="outlined-basic"
+        label="Building Address"
+        variant="outlined"
+        value={fields.buildingAddress}
+        onChange={(e) => handleTextChange(e, "buildingAddress")}
+        full
+      />
       <Flex>
         <FormControl>
           <InputLabel id="demo-simple-select-label">Building Type</InputLabel>
